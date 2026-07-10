@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHub | V1</title>
+    <title>FinanceHub | V2</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0062ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FinanceHub">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
@@ -38,7 +43,6 @@
         body.terminal-mode .surplus-bar.health-good { background: rgba(0,255,65,0.08); border-color: #00ff41; }
         body.terminal-mode .surplus-bar.health-warn { background: rgba(255,200,0,0.08); border-color: #ffc800; }
         body.terminal-mode .surplus-bar.health-bad  { background: rgba(255,51,51,0.08); border-color: #ff3333; }
-        body.terminal-mode .currency-toggle button.active { background: #00ff41; color: #000; }
         body.terminal-mode .badge.bg-primary { background: #00ff41 !important; color: #000 !important; }
         body.terminal-mode .btn-close { filter: invert(1) sepia(1) saturate(5) hue-rotate(90deg); }
         body.terminal-mode .modal-content { background: #111; border: 1px solid #1a3a1a; }
@@ -71,9 +75,6 @@
         .health-bad  .surplus-health-tag  { color: #dc2626; }
         .health-zero .surplus-health-tag  { color: var(--muted); }
 
-        .currency-toggle { display: flex; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-        .currency-toggle button { border: none; background: transparent; font-size: 0.6rem; font-weight: 800; padding: 4px 9px; color: var(--muted); cursor: pointer; transition: 0.2s; }
-        .currency-toggle button.active { background: var(--primary); color: #fff; border-radius: 8px; }
         .header-btn { cursor: pointer; padding: 8px; border-radius: 12px; color: var(--text); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: var(--card); border: 1px solid var(--border); }
 
         body.privacy-on .blur-this { filter: blur(14px); }
@@ -167,7 +168,137 @@
         body.terminal-mode .proj-pdf-btn { background:rgba(0,255,65,0.07); color:#00ff41; border-color:rgba(0,255,65,0.2); }
         body.terminal-mode .proj-pdf-btn:hover { background:#00ff41; color:#000; }
 
-        /* ── PRINT / PDF STYLES ── */
+        /* ── HEALTH SCORE ── */
+        .health-score-ring { position: relative; width: 130px; height: 130px; margin: 0 auto 10px; }
+        .health-score-ring svg { transform: rotate(-90deg); }
+        .health-score-ring .score-val { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+        .health-score-ring .score-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+        .health-score-ring .score-label { font-size: 0.5rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; opacity: 0.6; }
+        .health-pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .health-pillar { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; }
+        .health-pillar .p-name { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 4px; }
+        .health-pillar .p-bar-wrap { background: var(--border); border-radius: 99px; height: 5px; margin-bottom: 4px; overflow: hidden; }
+        .health-pillar .p-bar { height: 5px; border-radius: 99px; transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+        .health-pillar .p-score { font-size: 0.68rem; font-weight: 800; }
+        .health-diagnosis { font-size: 0.65rem; font-weight: 700; color: var(--muted); text-align: center; padding: 8px 12px; background: var(--input-bg); border-radius: 12px; margin-top: 10px; line-height: 1.4; }
+
+        /* ── GOAL BUCKETS ── */
+        .goal-bucket { background: var(--input-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+        .goal-bucket .goal-name { font-size: 0.78rem; font-weight: 800; margin-bottom: 6px; }
+        .goal-track-wrap { background: var(--border); border-radius: 99px; height: 8px; margin: 6px 0; overflow: hidden; }
+        .goal-track-fill { height: 8px; border-radius: 99px; background: var(--primary); transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+        .goal-eta { font-size: 0.58rem; font-weight: 800; color: var(--muted); }
+        .goal-eta span { color: var(--primary); }
+        .goal-add-form { background: var(--input-bg); border: 1px dashed var(--border); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+        .goal-del-btn { background: none; border: none; color: var(--danger); font-size: 0.65rem; font-weight: 800; cursor: pointer; padding: 2px 6px; opacity: 0.7; }
+        .goal-del-btn:hover { opacity: 1; }
+        .goal-saved-chip { font-size: 0.6rem; font-weight: 800; background: rgba(74,222,128,0.12); color: #16a34a; border-radius: 8px; padding: 3px 8px; }
+        body.terminal-mode .goal-track-fill { background: #00ff41; }
+        body.terminal-mode .goal-saved-chip { background: rgba(0,255,65,0.12); color: #00ff41; }
+
+        /* ── EXPENSE DNA CHART ── */
+        .dna-canvas-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+        .dna-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; }
+        .dna-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: 700; }
+        .dna-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .dna-center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; pointer-events: none; }
+        .dna-center-label .dna-pct { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+        .dna-center-label .dna-cat { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ── SIP ACCRUAL CHIP ── */
+        .sip-accrual-chip { font-size:0.55rem; font-weight:800; color:#16a34a; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25); border-radius:8px; padding:3px 8px; margin-top:3px; display:none; }
+        body.dark-mode .sip-accrual-chip { background:rgba(34,197,94,0.12); }
+        body.terminal-mode .sip-accrual-chip { color:#00ff41; background:rgba(0,255,65,0.08); border-color:rgba(0,255,65,0.2); }
+
+        /* ── BALANCE LAST-UPDATED STAMP ── */
+        .bal-updated-stamp { font-size:0.52rem; font-weight:700; color:var(--muted); margin-top:2px; display:none; letter-spacing:0.2px; }
+
+        /* ── SIP LOCK STATUS ── */
+        .sip-lock-chip { font-size:0.58rem; font-weight:800; border-radius:10px; padding:5px 12px; margin-top:8px; text-align:center; display:none; }
+        .sip-lock-chip.locked { background:rgba(248,113,113,0.1); color:#dc2626; border:1px solid rgba(248,113,113,0.3); }
+        .sip-lock-chip.unlocked { background:rgba(34,197,94,0.1); color:#16a34a; border:1px solid rgba(34,197,94,0.3); }
+        body.terminal-mode .sip-lock-chip.locked { background:rgba(255,51,51,0.08); color:#ff3333; border-color:rgba(255,51,51,0.25); }
+        body.terminal-mode .sip-lock-chip.unlocked { background:rgba(0,255,65,0.08); color:#00ff41; border-color:rgba(0,255,65,0.2); }
+
+        /* ── INVEST RESTORE POINT ── */
+        .restore-entry { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+        .restore-entry .re-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .restore-entry .re-title { font-size: 0.72rem; font-weight: 800; }
+        .restore-entry .re-ts { font-size: 0.55rem; color: var(--muted); font-weight: 700; }
+        .restore-entry .re-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+        .restore-entry .re-cell { background: var(--card); border-radius: 8px; padding: 6px 8px; }
+        .restore-entry .re-cell .lbl { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .restore-entry .re-cell .val { font-size: 0.68rem; font-weight: 800; color: var(--primary); }
+        .restore-btn { font-size: 0.6rem; font-weight: 800; border-radius: 8px; padding: 6px 14px; border: none; cursor: pointer; background: rgba(0,98,255,0.08); color: var(--primary); border: 1px solid rgba(0,98,255,0.2); transition: 0.2s; }
+        .restore-btn:hover { background: var(--primary); color: #fff; }
+        .restore-del-btn { font-size: 0.6rem; font-weight: 800; border-radius: 8px; padding: 6px 10px; border: none; cursor: pointer; background: rgba(255,77,77,0.08); color: var(--danger); margin-left: 6px; }
+        body.terminal-mode .restore-btn { background: rgba(0,255,65,0.08); color: #00ff41; border-color: rgba(0,255,65,0.2); }
+        body.terminal-mode .restore-btn:hover { background: #00ff41; color: #000; }
+        .restore-section-label { font-size: 0.58rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; padding: 8px 0 6px; border-top: 1px dashed var(--border); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+        .restore-empty { font-size: 0.62rem; color: var(--muted); font-weight: 700; text-align: center; padding: 14px 0; }
+
+        /* ── APRIL NUDGE BANNER ── */
+        .april-nudge { border-radius:16px; padding:13px 16px; margin-bottom:14px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.35); display:none; }
+        .april-nudge .an-title { font-size:0.72rem; font-weight:800; color:#d97706; margin-bottom:2px; }
+        .april-nudge .an-sub   { font-size:0.58rem; font-weight:700; color:var(--muted); line-height:1.4; }
+        .april-nudge .an-btn   { font-size:0.6rem; font-weight:800; border:none; background:rgba(245,158,11,0.15); color:#d97706; border-radius:8px; padding:5px 12px; cursor:pointer; margin-top:8px; }
+        .april-nudge .an-dismiss { font-size:0.55rem; font-weight:800; background:none; border:none; color:var(--muted); cursor:pointer; padding:0; margin-left:8px; margin-top:8px; }
+        body.dark-mode .april-nudge { background:rgba(245,158,11,0.06); }
+        body.terminal-mode .april-nudge { background:rgba(0,255,65,0.05); border-color:rgba(0,255,65,0.2); }
+        body.terminal-mode .april-nudge .an-title { color:#00ff41; }
+        body.terminal-mode .april-nudge .an-btn   { background:rgba(0,255,65,0.1); color:#00ff41; }
+
+        /* ── SALARY HIKE SIMULATOR ── */
+        .hike-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 99px; background: var(--border); outline: none; cursor: pointer; transition: 0.2s; }
+        .hike-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 8px rgba(0,98,255,0.35); }
+        .hike-diff-card { display: flex; justify-content: space-between; align-items: center; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; }
+        .hike-diff-card .hike-side { text-align: center; flex: 1; }
+        .hike-diff-card .hike-divider { width: 1px; background: var(--border); align-self: stretch; margin: 0 8px; }
+        .hike-diff-card .hike-label { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 2px; }
+        .hike-diff-card .hike-val { font-size: 0.85rem; font-weight: 800; }
+        .hike-arrow { text-align: center; font-size: 0.6rem; font-weight: 800; color: var(--primary); padding: 6px 0; }
+        body.terminal-mode .hike-slider::-webkit-slider-thumb { background: #00ff41; box-shadow: 0 0 8px rgba(0,255,65,0.4); }
+
+        /* ── CUSTOM EXPENSE ROWS ── */
+        .expense-row { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+        .expense-row .exp-label-input { flex: 1.1; font-size: 0.75rem; }
+        .expense-row .exp-amount-input { flex: 1; font-size: 0.75rem; }
+        .expense-row .exp-del-btn { background: none; border: none; color: var(--danger); font-size: 0.75rem; cursor: pointer; padding: 4px 6px; opacity: 0.6; flex-shrink: 0; }
+        .expense-row .exp-del-btn:hover { opacity: 1; }
+
+        /* ── BUDGET ALERT NUDGE ── */
+        .budget-alert-nudge { border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.4); display: none; }
+        .budget-alert-nudge .ban-title { font-size: 0.68rem; font-weight: 800; color: #dc2626; margin-bottom: 2px; }
+        .budget-alert-nudge .ban-sub { font-size: 0.58rem; font-weight: 700; color: var(--muted); }
+        body.dark-mode .budget-alert-nudge { background: rgba(248,113,113,0.06); }
+        body.terminal-mode .budget-alert-nudge { background: rgba(255,51,51,0.06); border-color: rgba(255,51,51,0.3); }
+        body.terminal-mode .budget-alert-nudge .ban-title { color: #ff3333; }
+
+        /* ── NET WORTH TRACKER ── */
+        .nw-tracker-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-top: 12px; }
+        .nw-tracker-card .nw-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px dashed var(--border); font-size: 0.72rem; }
+        .nw-tracker-card .nw-row:last-child { border-bottom: none; font-weight: 800; }
+        .nw-history-sparkline { display: flex; align-items: flex-end; gap: 4px; height: 36px; margin-top: 10px; }
+        .nw-history-bar { flex: 1; border-radius: 4px 4px 0 0; background: rgba(0,98,255,0.25); min-width: 6px; transition: height 0.4s ease; cursor: pointer; position: relative; }
+        .nw-history-bar.current { background: var(--primary); }
+        .nw-history-bar:hover::after { content: attr(data-tip); position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--card); font-size: 0.5rem; font-weight: 800; padding: 3px 7px; border-radius: 6px; white-space: nowrap; pointer-events: none; }
+        body.terminal-mode .nw-history-bar { background: rgba(0,255,65,0.2); }
+        body.terminal-mode .nw-history-bar.current { background: #00ff41; }
+
+        /* ── GOAL TOP-UP ── */
+        .goal-topup-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+        .goal-topup-row input { flex: 1; font-size: 0.72rem; }
+        .goal-topup-btn { font-size: 0.6rem; font-weight: 800; border-radius: 8px; padding: 5px 12px; border: none; cursor: pointer; background: rgba(34,197,94,0.12); color: #16a34a; white-space: nowrap; }
+        body.terminal-mode .goal-topup-btn { background: rgba(0,255,65,0.1); color: #00ff41; }
+
+        /* ── SURPLUS SPARKLINE ── */
+        .surplus-history-wrap { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); display: none; }
+        .surplus-spark-label { font-size: 0.52rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+        .surplus-sparkline { display: flex; align-items: flex-end; gap: 3px; height: 32px; }
+        .surplus-spark-bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 3px; transition: height 0.3s ease; position: relative; cursor: pointer; }
+        .surplus-spark-bar:hover::after { content: attr(data-tip); position: absolute; bottom: 105%; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--card); font-size: 0.5rem; font-weight: 800; padding: 2px 6px; border-radius: 5px; white-space: nowrap; pointer-events: none; z-index: 10; }
+
+
         @media print {
             body { background:#fff !important; color:#000 !important; font-size:10pt; padding-bottom:0; }
             .no-print, .nav-pills, #header-area, #privacy-banner, #toast-msg, #tour-tooltip,
@@ -190,13 +321,12 @@
     <div class="d-flex justify-content-between align-items-center mb-3" id="header-area">
         <div>
             <h5 class="fw-800 mb-0" style="letter-spacing: -0.5px;">Finance<span class="text-primary">Hub</span></h5>
-            <span class="badge rounded-pill bg-primary" style="font-size: 0.5rem;">V1.0</span>
+            <span class="badge rounded-pill bg-primary" style="font-size: 0.5rem;">V2.0</span>
         </div>
         <div class="d-flex gap-2">
             <button id="start-tour-btn" class="header-btn" onclick="startVoiceTour()" title="Start Guided Tour">🎤</button>
             <div class="header-btn" data-bs-toggle="modal" data-bs-target="#historyModal" title="Financial Ledger">📜</div>
             <div id="eye-btn" class="header-btn" onclick="togglePrivacy()" title="Toggle Privacy">🙈</div>
-            <div id="theme-btn" class="header-btn" onclick="toggleTerminalTheme()" title="Toggle Terminal Theme">⌨️</div>
             <div class="header-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</div>
         </div>
     </div>
@@ -209,6 +339,7 @@
         <li class="nav-item"><button class="nav-link active" id="btn-tab-budget" data-bs-toggle="pill" data-bs-target="#tab-budget">Budget</button></li>
         <li class="nav-item"><button class="nav-link" id="btn-tab-invest" data-bs-toggle="pill" data-bs-target="#tab-invest">Invest</button></li>
         <li class="nav-item"><button class="nav-link" id="btn-tab-retire" data-bs-toggle="pill" data-bs-target="#tab-retire">Retire</button></li>
+        <li class="nav-item"><button class="nav-link" id="btn-tab-insights" data-bs-toggle="pill" data-bs-target="#tab-insights">Insights</button></li>
         <li class="nav-item"><button class="nav-link" id="btn-tab-dev" data-bs-toggle="pill" data-bs-target="#tab-dev">Dev</button></li>
     </ul>
 
@@ -219,10 +350,6 @@
             <div class="f-card" id="card-budget-inflow">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <label class="label-text text-primary mb-0">Monthly Inflow</label>
-                    <div class="currency-toggle" id="currency-toggle">
-                        <button class="active" id="btn-lakh" onclick="setCurrency('lakh')">₹ Lakh</button>
-                        <button id="btn-crore" onclick="setCurrency('crore')">₹ Crore</button>
-                    </div>
                 </div>
                 <div class="row g-2">
                     <div class="col-12">
@@ -232,22 +359,15 @@
                 </div>
             </div>
             <div class="f-card" id="card-budget-outflow">
-                <label class="label-text text-danger">Monthly Outflow</label>
-                <div class="row g-2 mb-2">
-                    <div class="col-6"><span class="label-text opacity-75">Rent/Bills</span><input type="number" id="b-rent" class="form-control sensitive-val" oninput="calculate()"></div>
-                    <div class="col-6"><span class="label-text opacity-75">Electricity</span><input type="number" id="b-elec" class="form-control sensitive-val" oninput="calculate()"></div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="label-text text-danger mb-0">Monthly Outflow</label>
+                    <button onclick="addExpenseRow()" style="background:none;border:none;font-size:0.65rem;font-weight:800;color:var(--primary);cursor:pointer;">＋ Add</button>
                 </div>
-                <div class="row g-2 mb-2">
-                    <div class="col-6"><span class="label-text opacity-75">Internet</span><input type="number" id="b-net" class="form-control sensitive-val" oninput="calculate()"></div>
-                    <div class="col-6"><span class="label-text opacity-75">Gas/Fuel</span><input type="number" id="b-gas" class="form-control sensitive-val" oninput="calculate()"></div>
-                </div>
-                <div class="row g-2 mb-2">
-                    <div class="col-6"><span class="label-text opacity-75">Credit Card</span><input type="number" id="b-cc" class="form-control sensitive-val" oninput="calculate()"></div>
-                    <div class="col-6"><span class="label-text opacity-75">Gold Loan/EMI</span><input type="number" id="b-gold" class="form-control sensitive-val" oninput="calculate()"></div>
-                </div>
-                <div class="row g-2">
-                    <div class="col-12"><span class="label-text opacity-75">Other / Misc</span><input type="number" id="b-misc" class="form-control sensitive-val" placeholder="groceries, subscriptions…" oninput="calculate()"></div>
-                </div>
+                <div id="expense-rows-container"></div>
+            </div>
+            <div class="budget-alert-nudge" id="budget-alert-nudge">
+                <div class="ban-title">⚠️ Expenses exceed income!</div>
+                <div class="ban-sub">Your outflow is more than your salary. Review your expenses to get back in the green.</div>
             </div>
             <div class="surplus-bar health-zero" id="card-surplus-area">
                 <div class="surplus-label-wrap">
@@ -261,12 +381,29 @@
 
         <!-- ═══════════════════ INVEST TAB ═══════════════════ -->
         <div class="tab-pane fade" id="tab-invest">
+
+            <!-- April yearly balance nudge banner -->
+            <div class="april-nudge" id="april-nudge-banner">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="an-title">📅 Time to update your balances</div>
+                </div>
+                <div class="an-sub">It's been a year since you last updated investment balances. Refresh each balance to keep projections accurate — especially EPFO passbook & Stocks.</div>
+                <div>
+                    <button class="an-btn" onclick="focusFirstBalance()">✏️ Update Now</button>
+                    <button class="an-dismiss" onclick="dismissAprilNudge()">Dismiss for this year</button>
+                </div>
+            </div>
+
             <div class="f-card" id="card-invest-area">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <label class="label-text text-primary mb-0">Portfolio Tracker</label>
-                    <span style="font-size:0.58rem; color:var(--muted); font-weight:700;">EPFO 8.25% · Stocks 12% · PPF 7.1%</span>
+                    <span style="font-size:0.58rem; color:var(--muted); font-weight:700;">EPFO 8.25% · PPF 7.1%</span>
                 </div>
                 <div id="invest-rows"></div>
+                <button id="sip-add-btn" onclick="addMonthlySIP()" style="margin-top:10px; width:100%; background:rgba(0,98,255,0.07); border:1px solid rgba(0,98,255,0.2); border-radius:12px; padding:9px 0; font-size:0.65rem; font-weight:800; color:var(--primary); cursor:pointer; letter-spacing:0.5px; transition:0.2s;" onmouseover="this.style.background='var(--primary)';this.style.color='#fff';" onmouseout="this.style.background='rgba(0,98,255,0.07)';this.style.color='var(--primary)';">
+                    ＋ Add This Month's SIP to Balances
+                </button>
+                <div class="sip-lock-chip" id="sip-lock-chip"></div>
             </div>
             <div class="f-card text-center border-primary" style="background: rgba(0,98,255,0.04)" id="card-invest-summary">
                 <div class="row mb-2">
@@ -312,10 +449,6 @@
                         <label class="label-text">Retirement Age</label>
                         <input type="number" id="r-age-ret" class="form-control" value="58" min="19" max="58" oninput="calculate()">
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label class="label-text">Monthly Basic Salary + DA (₹)</label>
-                    <input type="number" id="r-basic-salary" class="form-control sensitive-val" placeholder="e.g. 25000" oninput="calculate()">
                 </div>
                 <div class="mb-3">
                     <label class="label-text">Monthly EPFO Contribution (₹)</label>
@@ -437,7 +570,7 @@
                 </div>
                 <div id="ppf-chart-view">
                     <div class="proj-canvas-wrap"><canvas id="ppf-chart"></canvas></div>
-                    <div style="font-size:0.55rem; color:var(--muted); text-align:center;">Invested vs maturity value by year</div>
+                    <div style="font-size:0.55rem; color:var(--muted); text-align:center;">Balance growth year by year until maturity</div>
                 </div>
                 <div id="ppf-table-view" style="display:none; overflow-x:auto;">
                     <table class="proj-table" id="ppf-proj-table">
@@ -453,7 +586,173 @@
             </button>
         </div>
 
+        <!-- ═══════════════════ INSIGHTS TAB ═══════════════════ -->
+        <div class="tab-pane fade" id="tab-insights">
+
+            <!-- ── FINANCIAL HEALTH SCORE ── -->
+            <div class="f-card" id="card-health-score">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <label class="label-text text-primary mb-0">Financial Health Score</label>
+                        <div style="font-size:0.58rem; color:var(--muted); font-weight:700; margin-top:1px;">Computed from your budget + investments</div>
+                    </div>
+                    <button onclick="calculate()" style="background:none;border:none;font-size:0.65rem;font-weight:800;color:var(--primary);cursor:pointer;">↺ Refresh</button>
+                </div>
+                <div class="health-score-ring">
+                    <svg width="130" height="130" viewBox="0 0 130 130">
+                        <circle cx="65" cy="65" r="54" fill="none" stroke="var(--border)" stroke-width="10"/>
+                        <circle id="hs-ring" cx="65" cy="65" r="54" fill="none" stroke="var(--primary)" stroke-width="10"
+                            stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3"
+                            style="transition: stroke-dashoffset 0.9s cubic-bezier(0.34,1.2,0.64,1), stroke 0.5s;"/>
+                    </svg>
+                    <div class="score-val">
+                        <div class="score-num" id="hs-num" style="color:var(--primary);">—</div>
+                        <div class="score-label">/100</div>
+                    </div>
+                </div>
+                <div class="health-pillars">
+                    <div class="health-pillar">
+                        <div class="p-name">Surplus Ratio</div>
+                        <div class="p-bar-wrap"><div class="p-bar" id="hpb-surplus" style="width:0%;background:#0062ff;"></div></div>
+                        <div class="p-score" id="hps-surplus">—</div>
+                    </div>
+                    <div class="health-pillar">
+                        <div class="p-name">SIP Coverage</div>
+                        <div class="p-bar-wrap"><div class="p-bar" id="hpb-sip" style="width:0%;background:#22c55e;"></div></div>
+                        <div class="p-score" id="hps-sip">—</div>
+                    </div>
+                    <div class="health-pillar">
+                        <div class="p-name">Invest Depth</div>
+                        <div class="p-bar-wrap"><div class="p-bar" id="hpb-invest" style="width:0%;background:#f59e0b;"></div></div>
+                        <div class="p-score" id="hps-invest">—</div>
+                    </div>
+                    <div class="health-pillar">
+                        <div class="p-name">Retire Ready</div>
+                        <div class="p-bar-wrap"><div class="p-bar" id="hpb-retire" style="width:0%;background:#a855f7;"></div></div>
+                        <div class="p-score" id="hps-retire">—</div>
+                    </div>
+                </div>
+                <div class="health-diagnosis" id="hs-diagnosis">Enter salary &amp; expenses in Budget tab to see your score.</div>
+            </div>
+
+            <!-- ── EXPENSE DNA CHART ── -->
+            <div class="f-card" id="card-expense-dna">
+                <label class="label-text text-primary mb-3">🧬 Expense DNA</label>
+                <div style="font-size:0.6rem; color:var(--muted); font-weight:700; margin-bottom:10px;">Tap a segment to highlight. Reflects Budget tab values.</div>
+                <div class="dna-canvas-wrap">
+                    <canvas id="dna-chart" width="200" height="200"></canvas>
+                    <div class="dna-center-label">
+                        <div class="dna-pct" id="dna-center-pct">—</div>
+                        <div class="dna-cat" id="dna-center-cat">of salary</div>
+                    </div>
+                </div>
+                <div class="dna-legend" id="dna-legend"></div>
+            </div>
+
+            <!-- ── NET WORTH TRACKER ── -->
+            <div class="f-card" id="card-net-worth-tracker">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <label class="label-text text-primary mb-0">🏦 Net Worth Tracker</label>
+                        <div style="font-size:0.58rem; color:var(--muted); font-weight:700; margin-top:1px;">Assets minus liabilities · from your inputs</div>
+                    </div>
+                    <button onclick="calculate()" style="background:none;border:none;font-size:0.65rem;font-weight:800;color:var(--primary);cursor:pointer;">↺ Refresh</button>
+                </div>
+                <div class="text-center mb-3">
+                    <div class="label-text opacity-75">Net Worth</div>
+                    <div class="h3 fw-800 blur-this" id="nw-total" style="color:var(--primary);">₹ 0</div>
+                    <div style="font-size:0.58rem; color:var(--muted); font-weight:700;" id="nw-subtitle">Fill Invest tab to compute</div>
+                </div>
+                <div class="nw-tracker-card">
+                    <div class="nw-row"><span>📈 Total Investments</span><span class="fw-800 blur-this text-primary" id="nw-assets">₹ 0</span></div>
+                    <div class="nw-row"><span>💳 Credit Card Dues</span><span class="fw-800 blur-this text-danger" id="nw-liab-cc">₹ 0</span></div>
+                    <div class="nw-row"><span>🏅 Loan / Gold EMI</span><span class="fw-800 blur-this text-danger" id="nw-liab-loan">₹ 0</span></div>
+                    <div class="nw-row" style="color:var(--primary);padding-top:8px;"><span>🎯 Net Worth</span><span class="blur-this" id="nw-net">₹ 0</span></div>
+                </div>
+                <div style="font-size:0.55rem; color:var(--muted); font-weight:700; text-align:center; margin-top:8px; line-height:1.5;">Liabilities pulled from Budget tab (CC + Gold EMI). Commit a Snapshot to build history.</div>
+                <div id="nw-history-wrap" style="display:none; margin-top:12px;">
+                    <div class="surplus-spark-label">📅 Net Worth History</div>
+                    <div class="nw-history-sparkline" id="nw-sparkline"></div>
+                </div>
+            </div>
+
+            <!-- ── SALARY HIKE SIMULATOR ── -->
+            <div class="f-card" id="card-hike-sim">
+                <label class="label-text text-primary mb-1">💰 Salary Hike Simulator</label>
+                <div style="font-size:0.6rem; color:var(--muted); font-weight:700; margin-bottom:14px;">See the ripple effect of a raise — instantly.</div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="label-text mb-0">Hike Percentage</span>
+                    <span class="fw-800" style="font-size:0.85rem; color:var(--primary);" id="hike-pct-label">10%</span>
+                </div>
+                <input type="range" class="hike-slider mb-3" id="hike-slider" min="1" max="100" value="10" oninput="updateHikeSim()">
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <span class="label-text">Current Salary (₹)</span>
+                        <input type="number" id="hike-salary-input" class="form-control" placeholder="Enter salary" oninput="updateHikeSim()" style="font-size:0.8rem;">
+                        <div style="font-size:0.5rem; color:var(--muted); font-weight:700; margin-top:2px;">Standalone · won't affect Budget tab</div>
+                    </div>
+                    <div class="col-6">
+                        <span class="label-text">After Hike (₹)</span>
+                        <div class="fw-800 text-success" style="font-size:0.82rem; padding-top:9px;" id="hike-new-salary">₹ 0</div>
+                    </div>
+                </div>
+                <div class="hike-diff-card mb-2">
+                    <div class="hike-side">
+                        <div class="hike-label">Current Surplus</div>
+                        <div class="hike-val" id="hike-curr-surplus">₹ 0</div>
+                    </div>
+                    <div class="hike-divider"></div>
+                    <div class="hike-side">
+                        <div class="hike-label">New Surplus</div>
+                        <div class="hike-val text-success" id="hike-new-surplus">₹ 0</div>
+                    </div>
+                    <div class="hike-divider"></div>
+                    <div class="hike-side">
+                        <div class="hike-label">Extra / mo</div>
+                        <div class="hike-val text-primary" id="hike-delta">+₹ 0</div>
+                    </div>
+                </div>
+                <div class="hike-arrow" id="hike-retire-impact">📈 EPF corpus delta: —</div>
+                <div style="font-size:0.58rem; color:var(--muted); font-weight:700; text-align:center; margin-top:4px;">Based on your retirement inputs · assumes same hike to EPFO contribution</div>
+            </div>
+
+            <!-- ── GOAL BUCKETS ── -->
+            <div class="f-card" id="card-goal-buckets">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <label class="label-text text-primary mb-0">🎯 Goal Buckets</label>
+                        <div style="font-size:0.58rem; color:var(--muted); font-weight:700; margin-top:1px;">Track savings targets from your monthly surplus</div>
+                    </div>
+                </div>
+                <div id="goal-list"></div>
+                <!-- Add Goal Form -->
+                <div class="goal-add-form">
+                    <div class="label-text mb-2">+ Add New Goal</div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-12">
+                            <span class="label-text opacity-75">Goal Name</span>
+                            <input type="text" id="goal-name-input" class="form-control" placeholder="e.g. Europe Trip, New Laptop…">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <span class="label-text opacity-75">Target Amount (₹)</span>
+                            <input type="number" id="goal-target-input" class="form-control" placeholder="e.g. 120000">
+                        </div>
+                        <div class="col-6">
+                            <span class="label-text opacity-75">Already Saved (₹)</span>
+                            <input type="number" id="goal-saved-input" class="form-control" placeholder="0">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-wide-sm shadow-sm" onclick="addGoal()">＋ Add Goal</button>
+                </div>
+                <div style="font-size:0.58rem; color:var(--muted); font-weight:700; text-align:center; margin-top:6px;">ETA calculated from Net Surplus in Budget tab</div>
+            </div>
+
+        </div>
+
         <!-- ═══════════════════ DEV TAB (unchanged) ═══════════════════ -->
+
         <div class="tab-pane fade" id="tab-dev">
             <div class="f-card" id="card-dev-profile">
                 <div class="text-center mb-2">
@@ -527,6 +826,13 @@
                     <div style="font-size:0.58rem; color:var(--muted); margin-top:4px;">Select an entry to auto-fill budget fields and edit/create new snapshot</div>
                 </div>
                 <div id="history-content"></div>
+
+                <!-- ── INVEST RESTORE POINTS ── -->
+                <div class="restore-section-label">
+                    <span>🔄</span><span>Investment Restore Points</span>
+                </div>
+                <div style="font-size:0.58rem; color:var(--muted); font-weight:700; margin-bottom:10px;">Auto-saved before each SIP addition · tap Restore to roll back portfolio balances</div>
+                <div id="restore-points-content"></div>
             </div>
             <div class="modal-footer border-0 pt-0 gap-2">
                 <button class="btn btn-sm btn-outline-danger rounded-3 fw-700" style="font-size:0.65rem; flex:1" onclick="clearAllLedger()">🗑️ Clear All</button>
@@ -620,47 +926,35 @@
 
     // ─── SNAPSHOT → LEDGER ──────────────────────────────────────────────────────
     function takeSnapshot() {
-        // Collect full data at snapshot time
         const now = new Date();
         const timestamp = now.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: true });
         const monthYear = now.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
 
-        const salary   = parseFloat(document.getElementById('b-salary').value) || 0;
-        const rent     = parseFloat(document.getElementById('b-rent').value)   || 0;
-        const elec     = parseFloat(document.getElementById('b-elec').value)   || 0;
-        const netBill  = parseFloat(document.getElementById('b-net').value)    || 0;
-        const gas      = parseFloat(document.getElementById('b-gas').value)    || 0;
-        const cc       = parseFloat(document.getElementById('b-cc').value)     || 0;
-        const gold     = parseFloat(document.getElementById('b-gold').value)   || 0;
-        const misc     = parseFloat(document.getElementById('b-misc').value)   || 0;
-
-        const surplus  = document.getElementById('res-surplus').innerText;
-        const assets   = document.getElementById('res-total-assets').innerText;
-        const sip      = document.getElementById('res-total-sip').innerText;
+        const salary  = parseFloat(document.getElementById('b-salary').value) || 0;
+        const surplus = document.getElementById('res-surplus').innerText;
+        const assets  = document.getElementById('res-total-assets').innerText;
+        const sip     = document.getElementById('res-total-sip').innerText;
         const netWorth = document.getElementById('res-net-worth')?.innerText || '—';
 
-        const entry = {
-            id: Date.now(),
-            timestamp,
-            monthYear,
-            salary,
-            outflow: { rent, elec, net: netBill, gas, cc, gold, misc },
-            surplus,
-            assets,
-            sip,
-            netWorth
-        };
+        // Build dynamic outflow map
+        const outflow = {};
+        expenseRows.forEach(r => {
+            const key = r.label.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            outflow[key] = parseFloat(r.amount) || 0;
+        });
+        outflow['_rows'] = expenseRows.map(r => ({ label: r.label, amount: r.amount }));
+
+        const entry = { id: Date.now(), timestamp, monthYear, salary, outflow, surplus, assets, sip, netWorth };
 
         history.unshift(entry);
         localStorage.setItem('fh_v1_history', JSON.stringify(history));
         renderHistory();
         showToast();
 
-        // Clear budget input fields
-        ['b-salary','b-rent','b-elec','b-net','b-gas','b-cc','b-gold','b-misc'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = '';
-        });
+        // Clear expense amounts
+        expenseRows.forEach(r => r.amount = '');
+        document.getElementById('b-salary').value = '';
+        renderExpenseRows();
         calculate();
     }
 
@@ -691,7 +985,21 @@
         }
         container.innerHTML = history.map((item, idx) => {
             const outflow = item.outflow || {};
-            const totalOut = Object.values(outflow).reduce((s,v)=>s+(parseFloat(v)||0),0);
+            // Support both old fixed keys and new _rows format
+            let outflowRows = [];
+            if (outflow._rows) {
+                outflowRows = outflow._rows;
+            } else {
+                // Legacy: map old fixed keys to label/amount pairs
+                const legacyMap = { rent:'Rent/Bills', elec:'Electricity', net:'Internet', gas:'Gas/Fuel', cc:'Credit Card', gold:'Gold/EMI', misc:'Other/Misc' };
+                Object.entries(legacyMap).forEach(([k, label]) => {
+                    if (outflow[k] !== undefined) outflowRows.push({ label, amount: outflow[k] });
+                });
+            }
+            const totalOut = outflowRows.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+            const outflowCells = outflowRows.filter(r => parseFloat(r.amount) > 0).map(r =>
+                `<div class="entry-cell"><div class="lbl">${r.label}</div><div class="val">₹${Number(r.amount||0).toLocaleString('en-IN')}</div></div>`
+            ).join('');
             return `
             <div class="ledger-entry" id="ledger-${item.id}">
                 <div class="d-flex justify-content-between align-items-start">
@@ -709,13 +1017,7 @@
                     <div class="entry-cell"><div class="lbl">Total Outflow</div><div class="val text-danger">₹${Number(totalOut).toLocaleString('en-IN')}</div></div>
                     <div class="entry-cell"><div class="lbl">Total Portfolio</div><div class="val text-primary">${item.assets}</div></div>
                     <div class="entry-cell"><div class="lbl">Monthly SIPs</div><div class="val text-success">${item.sip||'—'}</div></div>
-                    <div class="entry-cell"><div class="lbl">Net Worth</div><div class="val text-primary">${item.netWorth||'—'}</div></div>
-                    <div class="entry-cell"><div class="lbl">Rent/Bills</div><div class="val">₹${Number(outflow.rent||0).toLocaleString('en-IN')}</div></div>
-                    <div class="entry-cell"><div class="lbl">Electricity</div><div class="val">₹${Number(outflow.elec||0).toLocaleString('en-IN')}</div></div>
-                    <div class="entry-cell"><div class="lbl">Internet</div><div class="val">₹${Number(outflow.net||0).toLocaleString('en-IN')}</div></div>
-                    <div class="entry-cell"><div class="lbl">Gas/Fuel</div><div class="val">₹${Number(outflow.gas||0).toLocaleString('en-IN')}</div></div>
-                    <div class="entry-cell"><div class="lbl">Credit Card</div><div class="val">₹${Number(outflow.cc||0).toLocaleString('en-IN')}</div></div>
-                    <div class="entry-cell"><div class="lbl">Other/Misc</div><div class="val">₹${Number(outflow.misc||0).toLocaleString('en-IN')}</div></div>
+                    ${outflowCells}
                 </div>
                 <div class="ledger-entry-actions">
                     <button class="ledger-btn ledger-btn-edit" onclick="toggleLedgerEdit(${item.id})">✏️ Edit</button>
@@ -773,59 +1075,45 @@
     function loadLedgerToFields() {
         const selector = document.getElementById('ledger-selector');
         const selectedId = parseInt(selector.value);
-        
         if (!selectedId) return;
-        
         const entry = history.find(h => h.id === selectedId);
         if (!entry) return;
-        
-        // Populate budget fields
+
         document.getElementById('b-salary').value = entry.salary || '';
-        
+
         const outflow = entry.outflow || {};
-        document.getElementById('b-rent').value = outflow.rent || '';
-        document.getElementById('b-elec').value = outflow.elec || '';
-        document.getElementById('b-net').value = outflow.net || '';
-        document.getElementById('b-gas').value = outflow.gas || '';
-        document.getElementById('b-cc').value = outflow.cc || '';
-        document.getElementById('b-gold').value = outflow.gold || '';
-        document.getElementById('b-misc').value = outflow.misc || '';
-        
-        // Recalculate with the loaded values
+        if (outflow._rows && outflow._rows.length) {
+            expenseRows = outflow._rows.map((r, i) => ({ id: i + 1, label: r.label, amount: r.amount }));
+            expNextId = expenseRows.length + 1;
+            renderExpenseRows();
+        } else {
+            // Legacy snapshot: map to existing rows by label match
+            const legacyMap = { rent:'Rent/Bills', elec:'Electricity', net:'Internet', gas:'Gas/Fuel', cc:'Credit Card', gold:'Gold Loan/EMI', misc:'Other/Misc' };
+            expenseRows.forEach(r => {
+                Object.entries(legacyMap).forEach(([k, label]) => {
+                    if (r.label === label && outflow[k] !== undefined) r.amount = outflow[k];
+                });
+            });
+            renderExpenseRows();
+        }
+
         calculate();
-        
-        // Switch to Budget tab
-        const budgetTab = document.getElementById('btn-tab-budget');
-        if (budgetTab) budgetTab.click();
-        
-        // Close the modal
+        document.getElementById('btn-tab-budget')?.click();
         const modal = bootstrap.Modal.getInstance(document.getElementById('historyModal'));
         if (modal) modal.hide();
-        
-        // Show confirmation toast
         const toast = document.getElementById('toast-msg');
         toast.textContent = '✅ Ledger entry loaded to Budget tab!';
         toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-            toast.textContent = '✅ Snapshot saved to Ledger!';
-        }, 2800);
+        setTimeout(() => { toast.classList.remove('show'); toast.textContent = '✅ Snapshot saved to Ledger!'; }, 2800);
     }
 
     // ─── CURRENCY FORMAT ────────────────────────────────────────────────────────
-    let currencyMode = 'lakh';
-    function setCurrency(mode) {
-        currencyMode = mode;
-        document.getElementById('btn-lakh').classList.toggle('active', mode === 'lakh');
-        document.getElementById('btn-crore').classList.toggle('active', mode === 'crore');
-        calculate();
-    }
     function formatINR(val) {
-        if (currencyMode === 'crore') {
-            if (Math.abs(val) >= 1e7) return '₹ ' + (val / 1e7).toFixed(2) + ' Cr';
-            if (Math.abs(val) >= 1e5) return '₹ ' + (val / 1e5).toFixed(2) + ' L';
-            return '₹ ' + val.toLocaleString('en-IN');
-        }
+        if (Math.abs(val) >= 1e5) return '₹ ' + (val / 1e5).toFixed(2) + ' L';
+        return '₹ ' + val.toLocaleString('en-IN');
+    }
+    function formatCrore(val) {
+        if (Math.abs(val) >= 1e7) return '₹ ' + (val / 1e7).toFixed(2) + ' Cr';
         if (Math.abs(val) >= 1e5) return '₹ ' + (val / 1e5).toFixed(2) + ' L';
         return '₹ ' + val.toLocaleString('en-IN');
     }
@@ -845,12 +1133,15 @@
 
     // ─── CALCULATE ──────────────────────────────────────────────────────────────
     function calculate() {
-        // Budget surplus
+        // Budget surplus — read from dynamic expense rows
         const sal = parseFloat(document.getElementById('b-salary').value) || 0;
-        const bills = ['b-rent','b-elec','b-net','b-gas','b-cc','b-gold','b-misc'].reduce((s, id) => s + (parseFloat(document.getElementById(id).value) || 0), 0);
+        const bills = expenseRows.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
         const surplusVal = sal - bills;
         document.getElementById('res-surplus').innerText = formatINR(surplusVal);
         updateSurplusHealth(surplusVal, sal);
+        // Budget alert nudge
+        const alertNudge = document.getElementById('budget-alert-nudge');
+        if (alertNudge) alertNudge.style.display = (sal > 0 && surplusVal < 0) ? 'block' : 'none';
 
         // Investments — weighted return rates per asset class
         const ppfRateForWeight = parseFloat(document.getElementById('r-ppf-rate')?.value || 7.1) / 100;
@@ -939,7 +1230,6 @@
         // ── RETIREMENT — EPFO corpus ──────────────────────────────────────────────
         const ageNow    = parseFloat(document.getElementById('r-age-now').value)        || 30;
         const ageRet    = parseFloat(document.getElementById('r-age-ret').value)        || 58;
-        const basicSal  = parseFloat(document.getElementById('r-basic-salary').value)   || 0;
         const monthlyContribBase = parseFloat(document.getElementById('r-epfo-monthly')?.value || 0);
         const openBal   = parseFloat(document.getElementById('r-current-bal').value)    || 0;
         const retRate   = parseFloat(document.getElementById('r-return-rate').value)    || 8.25;
@@ -974,7 +1264,7 @@
         const contribFV = Math.max(0, balance - lumpFV);
         const retVal    = balance;
 
-        document.getElementById('res-ret-total').innerText = formatINR(Math.round(retVal || 0));
+        document.getElementById('res-ret-total').innerText = formatCrore(Math.round(retVal || 0));
         document.getElementById('res-ret-subtitle').innerText = yrs > 0
             ? `Age ${ageNow} → ${ageRet} · ${yrs} yrs · ${retRate}% p.a.`
             : 'Set ages above to project';
@@ -988,7 +1278,7 @@
         document.getElementById('rb-inc').innerText     = salHike + '% p.a.';
         document.getElementById('rb-lump').innerText    = formatINR(Math.round(lumpFV));
         document.getElementById('rb-sipfv').innerText   = formatINR(Math.round(contribFV));
-        document.getElementById('rb-total').innerText   = formatINR(Math.round(retVal || 0));
+        document.getElementById('rb-total').innerText   = formatCrore(Math.round(retVal || 0));
 
         // Render EPFO chart + table
         if (epfoYearData.length > 0) {
@@ -997,6 +1287,13 @@
         }
 
         // Loan projections removed
+
+        // ── New Features ─────────────────────────────────────────────────────────
+        updateHealthScore();
+        updateExpenseDNA();
+        updateHikeSim();
+        renderGoals();
+        updateNetWorthTracker();
         saveData();
     }
 
@@ -1010,26 +1307,367 @@
     };
 
     function renderInvestRows() {
+        const balDates = JSON.parse(localStorage.getItem('fh_v1_bal_dates') || '{}');
         let html = `<div class="row g-2 mb-2 opacity-50">
             <div class="col-4 label-text">Asset</div>
             <div class="col-4 label-text">Balance</div>
             <div class="col-4 label-text">SIP/mo</div>
         </div>`;
         Object.entries(investMeta).forEach(([k, meta]) => {
-            html += `<div class="row g-2 mb-2 align-items-center">
+            const dateStr = balDates[k];
+            const stampText = dateStr
+                ? 'Updated ' + new Date(dateStr).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+                : '';
+            html += `<div class="row g-2 mb-1 align-items-center">
                 <div class="col-4">
                     <div class="fw-800 small text-uppercase" style="font-size:0.65rem;">${meta.label}</div>
                     <div style="font-size:0.55rem; color:var(--muted);">${meta.hint}</div>
                 </div>
-                <div class="col-4"><input type="number" id="i-${k}-bal" class="form-control sensitive-val" placeholder="0" oninput="calculate()"></div>
-                <div class="col-4"><input type="number" id="i-${k}-m"   class="form-control sensitive-val" placeholder="0" oninput="onInvestSIPInput('${k}')"></div>
+                <div class="col-4">
+                    <input type="number" id="i-${k}-bal" class="form-control sensitive-val" placeholder="0" oninput="onBalanceInput('${k}')">
+                </div>
+                <div class="col-4">
+                    <input type="number" id="i-${k}-m" class="form-control sensitive-val" placeholder="0" oninput="onInvestSIPInput('${k}')">
+                </div>
+            </div>
+            <div class="row g-0 mb-2" id="meta-row-${k}" style="display:${dateStr ? 'flex' : 'none'};">
+                <div class="col-4"></div>
+                <div class="col-8" style="display:flex; align-items:center; gap:6px;">
+                    <div class="bal-updated-stamp" id="bal-stamp-${k}" style="display:${dateStr ? 'block' : 'none'}; white-space:nowrap;">${stampText}</div>
+                    <div class="sip-accrual-chip" id="accrual-chip-${k}" style="white-space:nowrap;"></div>
+                </div>
             </div>`;
         });
         document.getElementById('invest-rows').innerHTML = html;
     }
 
     function onInvestSIPInput(key) {
+        // Hide accrual chip when user manually edits a SIP amount
+        const chip = document.getElementById(`accrual-chip-${key}`);
+        if (chip) chip.style.display = 'none';
         calculate();
+    }
+
+    function onBalanceInput(key) {
+        const todayStr = new Date().toISOString().slice(0, 10);
+
+        // Update balance date for this asset
+        const balDates = JSON.parse(localStorage.getItem('fh_v1_bal_dates') || '{}');
+        balDates[key] = todayStr;
+        localStorage.setItem('fh_v1_bal_dates', JSON.stringify(balDates));
+
+        // Update the stamp text live
+        const stamp = document.getElementById(`bal-stamp-${key}`);
+        if (stamp) {
+            stamp.textContent = 'Updated ' + new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+            stamp.style.display = 'block';
+        }
+        // Show the meta row, hide accrual chip since balance is manually set
+        const metaRow = document.getElementById(`meta-row-${key}`);
+        if (metaRow) metaRow.style.display = 'flex';
+        const chip = document.getElementById(`accrual-chip-${key}`);
+        if (chip) chip.style.display = 'none';
+
+        // Record that a balance was updated today (for yearly nudge tracking)
+        localStorage.setItem('fh_v1_last_bal_update', todayStr);
+
+        calculate();
+    }
+
+    // ─── APRIL YEARLY NUDGE ─────────────────────────────────────────────────────
+    function checkAprilNudge() {
+        const banner = document.getElementById('april-nudge-banner');
+        if (!banner) return;
+
+        const dismissed = localStorage.getItem('fh_v1_nudge_dismissed_year');
+        const thisYear  = new Date().getFullYear().toString();
+
+        // Already dismissed this calendar year
+        if (dismissed === thisYear) return;
+
+        const lastUpdate = localStorage.getItem('fh_v1_last_bal_update');
+        const today = new Date();
+        const isApril = today.getMonth() === 3; // April = 3
+
+        // Show if: it's April AND (never updated OR last update was >10 months ago)
+        let shouldShow = false;
+        if (isApril) {
+            if (!lastUpdate) {
+                shouldShow = true;
+            } else {
+                const last = new Date(lastUpdate);
+                const monthsAgo = (today.getFullYear() - last.getFullYear()) * 12 + (today.getMonth() - last.getMonth());
+                if (monthsAgo >= 10) shouldShow = true;
+            }
+        }
+
+        if (shouldShow) banner.style.display = 'block';
+    }
+
+    function dismissAprilNudge() {
+        const banner = document.getElementById('april-nudge-banner');
+        if (banner) banner.style.display = 'none';
+        localStorage.setItem('fh_v1_nudge_dismissed_year', new Date().getFullYear().toString());
+    }
+
+    function focusFirstBalance() {
+        dismissAprilNudge();
+        // Switch to invest tab if not already there
+        document.getElementById('btn-tab-invest')?.click();
+        setTimeout(() => {
+            // Highlight and focus first balance field that has a value
+            const keys = Object.keys(investMeta);
+            for (const k of keys) {
+                const el = document.getElementById(`i-${k}-bal`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.focus();
+                    el.style.borderColor = '#f59e0b';
+                    setTimeout(() => el.style.borderColor = '', 2000);
+                    break;
+                }
+            }
+        }, 300);
+    }
+
+    // ─── INVEST RESTORE POINTS ──────────────────────────────────────────────────
+    // Auto-saved before each SIP add. Stored separately from budget ledger.
+
+    function saveInvestRestorePoint() {
+        const points = JSON.parse(localStorage.getItem('fh_v1_invest_restore') || '[]');
+        const balDates = JSON.parse(localStorage.getItem('fh_v1_bal_dates') || '{}');
+        const snapshot = {
+            id: Date.now(),
+            timestamp: new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+            balances: {},
+            sips: {},
+            balDates: { ...balDates }
+        };
+        ['epfo','stock','ppf','apy','other'].forEach(k => {
+            snapshot.balances[k] = parseFloat(document.getElementById(`i-${k}-bal`)?.value || 0);
+            snapshot.sips[k]     = parseFloat(document.getElementById(`i-${k}-m`)?.value   || 0);
+        });
+        // Keep only last 5 restore points
+        points.unshift(snapshot);
+        if (points.length > 5) points.length = 5;
+        localStorage.setItem('fh_v1_invest_restore', JSON.stringify(points));
+        renderRestorePoints();
+    }
+
+    function renderRestorePoints() {
+        const container = document.getElementById('restore-points-content');
+        if (!container) return;
+        const points = JSON.parse(localStorage.getItem('fh_v1_invest_restore') || '[]');
+        if (!points.length) {
+            container.innerHTML = '<div class="restore-empty">No restore points yet — one is saved automatically each time you add a monthly SIP.</div>';
+            return;
+        }
+        container.innerHTML = points.map((p, idx) => {
+            const assetKeys = ['epfo','stock','ppf','apy','other'];
+            const labels    = { epfo:'EPFO', stock:'Stocks', ppf:'PPF', apy:'APY', other:'Other' };
+            const cells = assetKeys
+                .filter(k => p.balances[k] > 0 || p.sips[k] > 0)
+                .map(k => `<div class="re-cell">
+                    <div class="lbl">${labels[k]}</div>
+                    <div class="val">${formatINR(Math.round(p.balances[k] || 0))}</div>
+                    <div style="font-size:0.5rem;color:var(--muted);font-weight:700;">SIP ${formatINR(Math.round(p.sips[k] || 0))}</div>
+                </div>`).join('');
+            const isLatest = idx === 0;
+            return `<div class="restore-entry">
+                <div class="re-header">
+                    <div>
+                        <div class="re-title">📸 Restore Point ${points.length - idx}${isLatest ? ' <span style="font-size:0.5rem;background:rgba(0,98,255,0.1);color:var(--primary);border-radius:5px;padding:1px 6px;font-weight:800;">LATEST</span>' : ''}</div>
+                        <div class="re-ts">Saved ${p.timestamp} · before SIP was added</div>
+                    </div>
+                </div>
+                <div class="re-grid">${cells}</div>
+                <div>
+                    <button class="restore-btn" onclick="restoreInvestSnapshot(${p.id})">↩ Restore This State</button>
+                    <button class="restore-del-btn" onclick="deleteRestorePoint(${p.id})">🗑️</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function restoreInvestSnapshot(id) {
+        const points = JSON.parse(localStorage.getItem('fh_v1_invest_restore') || '[]');
+        const point  = points.find(p => p.id === id);
+        if (!point) return;
+        if (!confirm('Restore portfolio balances to this saved state? Current balances will be overwritten.')) return;
+
+        // Restore balances and SIPs
+        ['epfo','stock','ppf','apy','other'].forEach(k => {
+            const balEl = document.getElementById(`i-${k}-bal`);
+            const sipEl = document.getElementById(`i-${k}-m`);
+            if (balEl) balEl.value = point.balances[k] || '';
+            if (sipEl) sipEl.value = point.sips[k]     || '';
+
+            // Hide accrual chips since we've reverted
+            const chip = document.getElementById(`accrual-chip-${k}`);
+            if (chip) chip.style.display = 'none';
+        });
+
+        // Restore balance dates
+        if (point.balDates) {
+            localStorage.setItem('fh_v1_bal_dates', JSON.stringify(point.balDates));
+        }
+
+        // Also unlock SIP for this month since we've rolled back
+        localStorage.removeItem('fh_v1_sip_month');
+        localStorage.removeItem('fh_v1_sip_date');
+        checkSIPLock();
+
+        // Rebuild stamp display
+        renderInvestRows();
+        // Re-fill restored values after re-render
+        ['epfo','stock','ppf','apy','other'].forEach(k => {
+            const balEl = document.getElementById(`i-${k}-bal`);
+            const sipEl = document.getElementById(`i-${k}-m`);
+            if (balEl) balEl.value = point.balances[k] || '';
+            if (sipEl) sipEl.value = point.sips[k]     || '';
+        });
+
+        calculate();
+
+        // Close modal and toast
+        const modal = bootstrap.Modal.getInstance(document.getElementById('historyModal'));
+        if (modal) modal.hide();
+
+        const toast = document.getElementById('toast-msg');
+        toast.style.background = '#0062ff';
+        toast.textContent = '↩ Portfolio restored to saved state';
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.style.background = '#22c55e';
+            toast.textContent = '✅ Snapshot saved to Ledger!';
+        }, 3000);
+    }
+
+    function deleteRestorePoint(id) {
+        let points = JSON.parse(localStorage.getItem('fh_v1_invest_restore') || '[]');
+        points = points.filter(p => p.id !== id);
+        localStorage.setItem('fh_v1_invest_restore', JSON.stringify(points));
+        renderRestorePoints();
+    }
+
+    // ─── MANUAL SIP ACCRUAL ──────────────────────────────────────────────────────
+    // Adds one month's SIP to EPFO, PPF, and APY balances on button click.
+    // Locked to once per calendar month — balance amounts can still be edited manually.
+    const accrualAssets = ['epfo', 'ppf', 'apy'];
+
+    function getSIPMonthKey() {
+        const d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    }
+
+    function checkSIPLock() {
+        const btn  = document.getElementById('sip-add-btn');
+        const chip = document.getElementById('sip-lock-chip');
+        if (!btn || !chip) return;
+        const lastKey  = localStorage.getItem('fh_v1_sip_month');
+        const thisKey  = getSIPMonthKey();
+        if (lastKey === thisKey) {
+            // Locked this month
+            const lastDate = localStorage.getItem('fh_v1_sip_date') || '';
+            btn.disabled = true;
+            btn.style.opacity = '0.45';
+            btn.style.cursor  = 'not-allowed';
+            btn.onmouseover   = null;
+            btn.onmouseout    = null;
+            chip.className    = 'sip-lock-chip locked';
+            chip.textContent  = `🔒 Already added this month (${lastDate}) · Edit balances manually if needed`;
+            chip.style.display = 'block';
+        } else {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor  = 'pointer';
+            btn.onmouseover   = function() { this.style.background='var(--primary)'; this.style.color='#fff'; };
+            btn.onmouseout    = function() { this.style.background='rgba(0,98,255,0.07)'; this.style.color='var(--primary)'; };
+            chip.className    = 'sip-lock-chip';
+            chip.style.display = 'none';
+        }
+    }
+
+    function addMonthlySIP() {
+        const thisKey  = getSIPMonthKey();
+        const lastKey  = localStorage.getItem('fh_v1_sip_month');
+
+        // Guard: already done this month
+        if (lastKey === thisKey) {
+            const chip = document.getElementById('sip-lock-chip');
+            if (chip) { chip.className = 'sip-lock-chip locked'; chip.style.display = 'block'; }
+            return;
+        }
+
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const displayDate = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+        let totalAdded = 0;
+        let log = [];
+
+        // ── Save restore point BEFORE any balances change ──
+        saveInvestRestorePoint();
+
+        accrualAssets.forEach(k => {
+            const balEl = document.getElementById(`i-${k}-bal`);
+            const sipEl = document.getElementById(`i-${k}-m`);
+            if (!balEl || !sipEl) return;
+
+            const sip = parseFloat(sipEl.value) || 0;
+            if (sip <= 0) return;
+
+            const currentBal = parseFloat(balEl.value) || 0;
+            balEl.value = Math.round(currentBal + sip);
+            totalAdded += sip;
+            log.push({ key: k, added: sip });
+
+            // Update balance date stamp
+            const balDates = JSON.parse(localStorage.getItem('fh_v1_bal_dates') || '{}');
+            balDates[k] = todayStr;
+            localStorage.setItem('fh_v1_bal_dates', JSON.stringify(balDates));
+
+            const stamp = document.getElementById(`bal-stamp-${k}`);
+            if (stamp) {
+                stamp.textContent = 'Updated ' + displayDate;
+                stamp.style.display = 'block';
+            }
+
+            // Show green accrual chip and reveal meta row
+            const chip = document.getElementById(`accrual-chip-${k}`);
+            if (chip) {
+                chip.textContent = `+${formatINR(Math.round(sip))} SIP added`;
+                chip.style.display = 'block';
+            }
+            const metaRow = document.getElementById(`meta-row-${k}`);
+            if (metaRow) metaRow.style.display = 'flex';
+        });
+
+        if (totalAdded > 0) {
+            // Record the month this was done
+            localStorage.setItem('fh_v1_sip_month', thisKey);
+            localStorage.setItem('fh_v1_sip_date',  displayDate);
+            checkSIPLock();
+
+            calculate();
+            const toast = document.getElementById('toast-msg');
+            const label = log.map(l => investMeta[l.key].label + ' +' + formatINR(Math.round(l.added))).join(' · ');
+            toast.textContent = `📈 SIP added — ${label}`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.textContent = '✅ Snapshot saved to Ledger!';
+            }, 3500);
+        } else {
+            const toast = document.getElementById('toast-msg');
+            toast.style.background = '#f59e0b';
+            toast.textContent = '⚠️ Enter SIP amounts for EPFO, PPF or APY first';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.style.background = '#22c55e';
+                toast.textContent = '✅ Snapshot saved to Ledger!';
+            }, 3000);
+        }
     }
 
     // ─── CHART INSTANCES ────────────────────────────────────────────────────────
@@ -1106,29 +1744,30 @@
         const canvas = document.getElementById('ppf-chart');
         if (!canvas) return;
         if (ppfChartInstance) { ppfChartInstance.destroy(); ppfChartInstance = null; }
-        const isDark = document.body.classList.contains('dark-mode') || document.body.classList.contains('terminal-mode');
+        const isDark     = document.body.classList.contains('dark-mode') || document.body.classList.contains('terminal-mode');
         const isTerminal = document.body.classList.contains('terminal-mode');
-        const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
-        const textColor = isTerminal ? '#00ff41' : (isDark ? '#a0aec0' : '#64748b');
-        const investedColor = isTerminal ? 'rgba(0,255,65,0.35)' : 'rgba(100,116,139,0.5)';
-        const matColor      = isTerminal ? 'rgba(0,255,65,0.8)'  : 'rgba(0,98,255,0.75)';
-        // Running total invested
-        let totalInvested = data[0]?.open || 0;
-        const investedLine = data.map(r => { totalInvested += r.deposit; return Math.round(totalInvested); });
-        const closingLine  = data.map(r => r.close);
+        const gridColor  = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
+        const textColor  = isTerminal ? '#00ff41' : (isDark ? '#a0aec0' : '#64748b');
+        const barColor   = isTerminal ? 'rgba(0,255,65,0.7)'  : 'rgba(0,98,255,0.75)';
+        const intColor   = isTerminal ? 'rgba(0,255,65,0.3)'  : 'rgba(74,222,128,0.7)';
+        const labels     = data.map(r => `Yr ${r.year}`);
+        const closingBals = data.map(r => r.close);
+        const interests   = data.map(r => r.interest);
         ppfChartInstance = new Chart(canvas, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: data.map(r => `Yr ${r.year}`),
+                labels,
                 datasets: [
-                    { label: 'Invested', data: investedLine, borderColor: investedColor, backgroundColor: investedColor, borderWidth: 2, pointRadius: 2, fill: false },
-                    { label: 'Maturity Value', data: closingLine, borderColor: matColor, backgroundColor: matColor + '22', borderWidth: 2.5, pointRadius: 2, fill: true }
+                    { label: 'Balance', data: closingBals, backgroundColor: barColor, borderRadius: 3, order: 2 },
+                    { label: 'Interest', data: interests,  backgroundColor: intColor,  borderRadius: 3, order: 1 }
                 ]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: textColor, font: { size: 9, weight: '700' } } },
-                           tooltip: { callbacks: { label: ctx => ' ' + formatINR(ctx.raw) } } },
+                plugins: {
+                    legend: { labels: { color: textColor, font: { size: 9, weight: '700' } } },
+                    tooltip: { callbacks: { label: ctx => ' ' + formatINR(ctx.raw) } }
+                },
                 scales: {
                     x: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } },
                     y: { ticks: { color: textColor, font: { size: 8 },
@@ -1178,8 +1817,30 @@
     function loadData() {
         renderInvestRows();
         history = JSON.parse(localStorage.getItem('fh_v1_history') || '[]');
+        // Load saved expense rows or seed defaults
+        const savedExpenses = JSON.parse(localStorage.getItem('fh_v2_expenses') || 'null');
+        if (savedExpenses) {
+            expenseRows = savedExpenses;
+        } else {
+            expenseRows = [
+                { id: 1, label: 'Rent/Bills', amount: '' },
+                { id: 2, label: 'Electricity', amount: '' },
+                { id: 3, label: 'Internet', amount: '' },
+                { id: 4, label: 'Gas/Fuel', amount: '' },
+                { id: 5, label: 'Credit Card', amount: '' },
+                { id: 6, label: 'Gold Loan/EMI', amount: '' },
+                { id: 7, label: 'Other/Misc', amount: '' },
+            ];
+        }
+        renderExpenseRows();
         const inputs = JSON.parse(localStorage.getItem('fh_v1_inputs') || '{}');
-        for (const k in inputs) { if (document.getElementById(k)) document.getElementById(k).value = inputs[k]; }
+        const defaultFields = { 'r-return-rate': '8.25', 'r-annual-increase': '5', 'r-ppf-rate': '7.1' };
+        for (const k in inputs) {
+            const el = document.getElementById(k);
+            if (!el) continue;
+            if (k in defaultFields) { if (inputs[k] !== '' && inputs[k] !== null) el.value = inputs[k]; }
+            else el.value = inputs[k];
+        }
         if (localStorage.getItem('fh_v1_darkmode') === 'true') document.body.classList.add('dark-mode');
         if (localStorage.getItem('fh_v1_terminal') === 'true') {
             document.body.classList.add('terminal-mode');
@@ -1190,23 +1851,41 @@
             document.getElementById('eye-btn').innerText = '👁️';
             document.getElementById('privacy-banner').style.display = 'none';
         } else {
-            // privacy-on is default (set on <body>), ensure banner is visible
             document.getElementById('eye-btn').innerText = '🙈';
             document.getElementById('privacy-banner').style.display = 'block';
         }
-        const savedCurrency = localStorage.getItem('fh_v1_currency');
-        if (savedCurrency) setCurrency(savedCurrency);
-        renderHistory(); calculate();
+        checkAprilNudge();
+        checkSIPLock();
+        renderHistory(); loadGoals(); calculate();
+
+        // Render restore points whenever the ledger modal opens
+        document.getElementById('historyModal')?.addEventListener('show.bs.modal', () => {
+            renderRestorePoints();
+        });
     }
 
     function saveData() {
         localStorage.setItem('fh_v1_privacy',  document.body.classList.contains('privacy-on'));
         localStorage.setItem('fh_v1_darkmode', document.body.classList.contains('dark-mode'));
         localStorage.setItem('fh_v1_terminal', document.body.classList.contains('terminal-mode'));
-        localStorage.setItem('fh_v1_currency', currencyMode);
         const inputs = {};
-        document.querySelectorAll('input').forEach(i => { if (i.id) inputs[i.id] = i.value; });
+        document.querySelectorAll('input').forEach(i => {
+            if (i.id && i.id !== 'hike-salary-input') inputs[i.id] = i.value;
+        });
         localStorage.setItem('fh_v1_inputs', JSON.stringify(inputs));
+
+        // Seed bal_dates for any asset that has a balance but no recorded date yet
+        const balDates = JSON.parse(localStorage.getItem('fh_v1_bal_dates') || '{}');
+        const todayStr = new Date().toISOString().slice(0, 10);
+        let balChanged = false;
+        Object.keys(investMeta).forEach(k => {
+            const balEl = document.getElementById(`i-${k}-bal`);
+            if (balEl && parseFloat(balEl.value) > 0 && !balDates[k]) {
+                balDates[k] = todayStr;
+                balChanged = true;
+            }
+        });
+        if (balChanged) localStorage.setItem('fh_v1_bal_dates', JSON.stringify(balDates));
     }
 
     // ─── EXPORT CSV ─────────────────────────────────────────────────────────────
@@ -1269,13 +1948,6 @@
     function buildEmailReport() {
         const date = new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
         const salary  = document.getElementById('b-salary').value || '0';
-        const rent    = document.getElementById('b-rent').value   || '0';
-        const elec    = document.getElementById('b-elec').value   || '0';
-        const net     = document.getElementById('b-net').value    || '0';
-        const gas     = document.getElementById('b-gas').value    || '0';
-        const cc      = document.getElementById('b-cc').value     || '0';
-        const gold    = document.getElementById('b-gold').value   || '0';
-        const misc    = document.getElementById('b-misc').value   || '0';
         const surplus = document.getElementById('res-surplus').innerText;
         const totalAssets = document.getElementById('res-total-assets').innerText;
         const totalSIP    = document.getElementById('res-total-sip').innerText;
@@ -1283,11 +1955,15 @@
         const ageRet     = document.getElementById('r-age-ret').value || '58';
         const retRate    = document.getElementById('r-return-rate').value || '8.25';
         const retInc     = document.getElementById('r-annual-increase').value || '5';
-        const retBasic   = document.getElementById('r-basic-salary').value || '0';
         const retOpenBal = document.getElementById('r-current-bal').value || '0';
         const retEpfoMo  = document.getElementById('r-epfo-monthly')?.value || '0';
         const ppfFuture  = document.getElementById('res-ppf-future')?.innerText || '—';
         const retProj    = document.getElementById('res-ret-total').innerText;
+
+        const expenseLines = expenseRows
+            .filter(r => parseFloat(r.amount) > 0)
+            .map(r => `   • ${(r.label||'Expense').padEnd(16)}: ₹${Number(r.amount||0).toLocaleString('en-IN')}`)
+            .join('\n') || '   No expenses entered.';
 
         const assetKeys = ['epfo','stock','ppf','apy','other'];
         const assetLines = assetKeys.map(k => {
@@ -1306,13 +1982,7 @@
             '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
             '  Net Monthly Salary  : ₹' + Number(salary).toLocaleString('en-IN'), '',
             '  Monthly Outflow:',
-            '   • Rent / Bills  : ₹' + Number(rent).toLocaleString('en-IN'),
-            '   • Electricity   : ₹' + Number(elec).toLocaleString('en-IN'),
-            '   • Internet      : ₹' + Number(net).toLocaleString('en-IN'),
-            '   • Gas / Fuel    : ₹' + Number(gas).toLocaleString('en-IN'),
-            '   • Credit Card   : ₹' + Number(cc).toLocaleString('en-IN'),
-            '   • Gold Loan/EMI : ₹' + Number(gold).toLocaleString('en-IN'),
-            '   • Other / Misc  : ₹' + Number(misc).toLocaleString('en-IN'), '',
+            expenseLines, '',
             '  ➤ Net Monthly Surplus: ' + surplus, '',
             '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
             '📈 INVESTMENTS',
@@ -1325,7 +1995,6 @@
             '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
             '  Current Age           : ' + ageNow + ' yrs',
             '  Retirement Age        : ' + ageRet + ' yrs',
-            '  Basic Salary+DA       : ₹' + Number(retBasic).toLocaleString('en-IN'),
             '  Monthly EPFO Contrib  : ₹' + Number(retEpfoMo).toLocaleString('en-IN'),
             '  Opening EPF Bal       : ₹' + Number(retOpenBal).toLocaleString('en-IN'),
             '  EPF Interest Rate     : ' + retRate + '% p.a.',
@@ -1364,7 +2033,457 @@
         window.location.href = 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
     }
 
-    window.onload = loadData;
+    // ─── FINANCIAL HEALTH SCORE ──────────────────────────────────────────────────
+    function updateHealthScore() {
+        const salary  = parseFloat(document.getElementById('b-salary').value) || 0;
+        const totalOut = expenseRows.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+        const surplus  = salary - totalOut;
+
+        let assetsT = 0, sipT = 0;
+        ['epfo','stock','ppf','apy','other'].forEach(k => {
+            assetsT += parseFloat(document.getElementById('i-'+k+'-bal')?.value || 0);
+            sipT    += parseFloat(document.getElementById('i-'+k+'-m')?.value   || 0);
+        });
+
+        const retVal = parseFloat(document.getElementById('res-ret-total')?.innerText?.replace(/[^0-9.]/g,'')) || 0;
+        const ageNow = parseFloat(document.getElementById('r-age-now')?.value) || 30;
+        const ageRet = parseFloat(document.getElementById('r-age-ret')?.value) || 58;
+        const yrs = Math.max(0, ageRet - ageNow);
+
+        // ── PILLAR 1: Surplus Ratio (0–30 pts) ──
+        let surplusScore = 0;
+        if (salary > 0) {
+            const ratio = surplus / salary;
+            surplusScore = Math.round(Math.min(30, Math.max(0, ratio >= 0.3 ? 30 : ratio >= 0.2 ? 22 : ratio >= 0.1 ? 14 : ratio > 0 ? 6 : 0)));
+        }
+
+        // ── PILLAR 2: SIP Coverage (0–25 pts) ──
+        let sipScore = 0;
+        if (salary > 0) {
+            const sipRatio = sipT / salary;
+            sipScore = Math.round(Math.min(25, Math.max(0, sipRatio >= 0.2 ? 25 : sipRatio >= 0.1 ? 18 : sipRatio >= 0.05 ? 10 : sipT > 0 ? 4 : 0)));
+        }
+
+        // ── PILLAR 3: Investment Depth (0–25 pts) ──
+        let investScore = 0;
+        if (salary > 0) {
+            const annualSalary = salary * 12;
+            const assetRatio = assetsT / Math.max(annualSalary, 1);
+            investScore = Math.round(Math.min(25, Math.max(0, assetRatio >= 5 ? 25 : assetRatio >= 2 ? 18 : assetRatio >= 1 ? 12 : assetRatio >= 0.5 ? 6 : assetsT > 0 ? 2 : 0)));
+        }
+
+        // ── PILLAR 4: Retire Readiness (0–20 pts) ──
+        let retireScore = 0;
+        if (salary > 0 && yrs > 0) {
+            const targetCorpus = salary * 12 * 25; // 25x annual salary rule
+            const readiness = retVal / Math.max(targetCorpus, 1);
+            retireScore = Math.round(Math.min(20, Math.max(0, readiness >= 1 ? 20 : readiness >= 0.5 ? 14 : readiness >= 0.25 ? 8 : readiness > 0 ? 3 : 0)));
+        }
+
+        const total = surplusScore + sipScore + investScore + retireScore;
+        const circumference = 339.3;
+        const offset = circumference - (total / 100) * circumference;
+
+        const ring = document.getElementById('hs-ring');
+        const numEl = document.getElementById('hs-num');
+        if (!ring || !numEl) return;
+
+        // Color based on score
+        const color = total >= 75 ? '#22c55e' : total >= 50 ? '#f59e0b' : total >= 25 ? '#0062ff' : '#f87171';
+        ring.style.strokeDashoffset = offset;
+        ring.style.stroke = color;
+        numEl.textContent = salary > 0 ? total : '—';
+        numEl.style.color = color;
+
+        // Pillars
+        const setP = (id, score, max, color) => {
+            const pct = Math.round((score / max) * 100);
+            document.getElementById('hpb-' + id).style.width = pct + '%';
+            document.getElementById('hpb-' + id).style.background = color;
+            document.getElementById('hps-' + id).textContent = salary > 0 ? score + '/' + max : '—';
+            document.getElementById('hps-' + id).style.color = color;
+        };
+        setP('surplus', surplusScore, 30, '#0062ff');
+        setP('sip',     sipScore,     25, '#22c55e');
+        setP('invest',  investScore,  25, '#f59e0b');
+        setP('retire',  retireScore,  20, '#a855f7');
+
+        // Diagnosis
+        const diag = document.getElementById('hs-diagnosis');
+        if (!salary) { diag.textContent = 'Enter salary & expenses in Budget tab to see your score.'; return; }
+        const tags = [];
+        if (surplusScore < 14) tags.push('low monthly surplus');
+        if (sipScore < 10)     tags.push('under-investing in SIPs');
+        if (investScore < 10)  tags.push('thin asset base');
+        if (retireScore < 8)   tags.push('retirement under-funded');
+        const strong = [];
+        if (surplusScore >= 22) strong.push('healthy savings rate');
+        if (sipScore >= 18)     strong.push('strong SIP discipline');
+        if (investScore >= 18)  strong.push('solid portfolio depth');
+        if (retireScore >= 14)  strong.push('retirement on track');
+
+        let msg = total >= 75 ? '🟢 Excellent! ' : total >= 50 ? '🟡 Good progress. ' : total >= 25 ? '🔵 Getting there. ' : '🔴 Needs attention. ';
+        if (strong.length) msg += strong.join(' & ') + '. ';
+        if (tags.length)   msg += 'Work on: ' + tags.join(', ') + '.';
+        diag.textContent = msg;
+    }
+
+    // ─── EXPENSE DNA CHART ────────────────────────────────────────────────────────
+    let dnaChartInstance = null;
+    const DNA_COLORS = ['#0062ff','#22c55e','#f59e0b','#a855f7','#f87171','#06b6d4','#f97316'];
+
+    function updateExpenseDNA() {
+        const salary = parseFloat(document.getElementById('b-salary').value) || 0;
+        const items = expenseRows
+            .map((r, i) => ({
+                label: r.label || ('Expense ' + (i+1)),
+                val: parseFloat(r.amount) || 0,
+                color: DNA_COLORS[i % DNA_COLORS.length]
+            })).filter(i => i.val > 0);
+
+        const canvas = document.getElementById('dna-chart');
+        const legend = document.getElementById('dna-legend');
+        if (!canvas) return;
+
+        if (!items.length) {
+            if (dnaChartInstance) { dnaChartInstance.destroy(); dnaChartInstance = null; }
+            document.getElementById('dna-center-pct').textContent = '—';
+            document.getElementById('dna-center-cat').textContent = 'no data';
+            if (legend) legend.innerHTML = '<div style="font-size:0.6rem;color:var(--muted);font-weight:700;grid-column:1/-1;">Enter expenses in Budget tab to see DNA chart.</div>';
+            return;
+        }
+
+        const total = items.reduce((s, i) => s + i.val, 0);
+        const totalPct = salary > 0 ? Math.round((total / salary) * 100) : 0;
+
+        const isDark = document.body.classList.contains('dark-mode') || document.body.classList.contains('terminal-mode');
+        const isTerminal = document.body.classList.contains('terminal-mode');
+
+        if (dnaChartInstance) { dnaChartInstance.destroy(); dnaChartInstance = null; }
+        dnaChartInstance = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: items.map(i => i.label),
+                datasets: [{
+                    data: items.map(i => i.val),
+                    backgroundColor: isTerminal ? items.map((_, idx) => `hsl(${120 + idx*15},100%,${40 + idx*4}%)`) : items.map(i => i.color),
+                    borderColor: isDark ? '#161b2b' : '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const pct = salary > 0 ? ((ctx.raw / salary) * 100).toFixed(1) : '—';
+                                document.getElementById('dna-center-pct').textContent = pct + '%';
+                                document.getElementById('dna-center-cat').textContent = ctx.label;
+                                return ' ' + formatINR(ctx.raw) + ' (' + pct + '%)';
+                            }
+                        }
+                    }
+                },
+                onClick: (evt, elements) => {
+                    if (elements.length) {
+                        const i = elements[0].index;
+                        const pct = salary > 0 ? ((items[i].val / salary) * 100).toFixed(1) : '—';
+                        document.getElementById('dna-center-pct').textContent = pct + '%';
+                        document.getElementById('dna-center-cat').textContent = items[i].label;
+                    }
+                }
+            }
+        });
+
+        document.getElementById('dna-center-pct').textContent = totalPct + '%';
+        document.getElementById('dna-center-cat').textContent = 'of salary';
+
+        if (legend) {
+            legend.innerHTML = items.map(i => {
+                const pct = salary > 0 ? ((i.val / salary) * 100).toFixed(0) : '—';
+                return `<div class="dna-legend-item"><div class="dna-legend-dot" style="background:${i.color};"></div><span>${i.label}</span><span style="color:var(--muted);margin-left:auto;">${pct}%</span></div>`;
+            }).join('');
+        }
+    }
+
+    // ─── SALARY HIKE SIMULATOR ───────────────────────────────────────────────────
+    function updateHikeSim() {
+        const slider = document.getElementById('hike-slider');
+        if (!slider) return;
+        const pct = parseInt(slider.value);
+        document.getElementById('hike-pct-label').textContent = pct + '%';
+
+        // Use standalone salary input — independent of Budget tab
+        const salary    = parseFloat(document.getElementById('hike-salary-input')?.value) || 0;
+        const totalOut  = expenseRows.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+        const currSurp  = salary - totalOut;
+        const newSalary = salary * (1 + pct / 100);
+        const newSurp   = newSalary - totalOut;
+        const delta     = newSurp - currSurp;
+
+        document.getElementById('hike-new-salary').textContent     = salary > 0 ? formatINR(Math.round(newSalary)) : '₹ 0';
+        document.getElementById('hike-curr-surplus').textContent   = salary > 0 ? formatINR(Math.round(currSurp))  : '₹ 0';
+        document.getElementById('hike-new-surplus').textContent    = salary > 0 ? formatINR(Math.round(newSurp))   : '₹ 0';
+        document.getElementById('hike-delta').textContent          = salary > 0 ? '+' + formatINR(Math.round(delta)) : '+₹ 0';
+
+        // Retirement corpus delta
+        const monthlyContrib = parseFloat(document.getElementById('r-epfo-monthly')?.value || 0);
+        const yrs = Math.max(0, (parseFloat(document.getElementById('r-age-ret')?.value) || 58) - (parseFloat(document.getElementById('r-age-now')?.value) || 30));
+        const rate = (parseFloat(document.getElementById('r-return-rate')?.value) || 8.25) / 100;
+        if (monthlyContrib > 0 && yrs > 0) {
+            const newContrib = monthlyContrib * (1 + pct / 100);
+            const annualRate = rate;
+            let balCurr = 0, balNew = 0;
+            let cCurr = monthlyContrib, cNew = newContrib;
+            const salHike = (parseFloat(document.getElementById('r-annual-increase')?.value) || 5) / 100;
+            for (let y = 0; y < yrs; y++) {
+                balCurr = balCurr * (1 + annualRate) + cCurr * 12;
+                balNew  = balNew  * (1 + annualRate) + cNew  * 12;
+                cCurr *= (1 + salHike); cNew *= (1 + salHike);
+            }
+            const corpusDelta = balNew - balCurr;
+            document.getElementById('hike-retire-impact').textContent = '📈 Retirement corpus grows by ' + formatINR(Math.round(corpusDelta)) + ' extra at retirement';
+        } else {
+            document.getElementById('hike-retire-impact').textContent = '📈 Fill Retire tab to see corpus impact';
+        }
+    }
+
+    // ─── GOAL BUCKETS ────────────────────────────────────────────────────────────
+    let goals = [];
+
+    function loadGoals() {
+        goals = JSON.parse(localStorage.getItem('fh_v1_goals') || '[]');
+        renderGoals();
+    }
+
+    function saveGoals() {
+        localStorage.setItem('fh_v1_goals', JSON.stringify(goals));
+    }
+
+    function addGoal() {
+        const name   = document.getElementById('goal-name-input').value.trim();
+        const target = parseFloat(document.getElementById('goal-target-input').value) || 0;
+        const saved  = parseFloat(document.getElementById('goal-saved-input').value)  || 0;
+        if (!name || target <= 0) {
+            document.getElementById('goal-name-input').style.borderColor = '#ff4d4d';
+            setTimeout(() => document.getElementById('goal-name-input').style.borderColor = '', 1500);
+            return;
+        }
+        goals.push({ id: Date.now(), name, target, saved });
+        saveGoals();
+        renderGoals();
+        document.getElementById('goal-name-input').value   = '';
+        document.getElementById('goal-target-input').value = '';
+        document.getElementById('goal-saved-input').value  = '';
+    }
+
+    function deleteGoal(id) {
+        goals = goals.filter(g => g.id !== id);
+        saveGoals();
+        renderGoals();
+    }
+
+    function renderGoals() {
+        const container = document.getElementById('goal-list');
+        if (!container) return;
+        const surplus = parseFloat(document.getElementById('res-surplus')?.innerText?.replace(/[^0-9.\-]/g,'').replace('−','-')) || 0;
+
+        if (!goals.length) {
+            container.innerHTML = '<div style="font-size:0.6rem;color:var(--muted);font-weight:700;text-align:center;padding:10px 0 14px;">No goals yet — add your first goal below.</div>';
+            return;
+        }
+        container.innerHTML = goals.map(g => {
+            const remaining = Math.max(0, g.target - g.saved);
+            const progress  = Math.min(100, Math.round((g.saved / g.target) * 100));
+            const months    = surplus > 0 ? Math.ceil(remaining / surplus) : null;
+            const etaText   = g.saved >= g.target ? '<span style="color:#22c55e;">🎉 Goal reached!</span>'
+                            : months !== null ? `<span>${months} month${months !== 1 ? 's' : ''} away</span> at current surplus`
+                            : 'Enter surplus to calculate ETA';
+            return `
+            <div class="goal-bucket">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="goal-name">${g.name}</div>
+                    <div class="d-flex align-items-center gap-1">
+                        ${g.saved >= g.target ? '<span class="goal-saved-chip">✓ Done</span>' : ''}
+                        <button class="goal-del-btn" onclick="deleteGoal(${g.id})">✕</button>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between" style="font-size:0.6rem;color:var(--muted);font-weight:700;margin-bottom:4px;">
+                    <span>Saved: <b style="color:var(--text);">${formatINR(g.saved)}</b></span>
+                    <span>Target: <b style="color:var(--text);">${formatINR(g.target)}</b></span>
+                </div>
+                <div class="goal-track-wrap"><div class="goal-track-fill" style="width:${progress}%;"></div></div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="goal-eta">${etaText}</div>
+                    <div style="font-size:0.6rem;font-weight:800;color:var(--primary);">${progress}%</div>
+                </div>
+                ${g.saved < g.target ? `
+                <div class="goal-topup-row">
+                    <input type="number" id="topup-${g.id}" class="form-control" placeholder="Top-up amount (₹)">
+                    <button class="goal-topup-btn" onclick="topUpGoal(${g.id})">＋ Add</button>
+                </div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    // ─── GOAL TOP-UP ─────────────────────────────────────────────────────────────
+    function topUpGoal(id) {
+        const input = document.getElementById(`topup-${id}`);
+        const amount = parseFloat(input?.value) || 0;
+        if (amount <= 0) {
+            if (input) { input.style.borderColor = '#ff4d4d'; setTimeout(() => input.style.borderColor = '', 1200); }
+            return;
+        }
+        const idx = goals.findIndex(g => g.id === id);
+        if (idx === -1) return;
+        goals[idx].saved = Math.min(goals[idx].target, goals[idx].saved + amount);
+        saveGoals(); renderGoals();
+        const toast = document.getElementById('toast-msg');
+        toast.textContent = `✅ Added ${formatINR(Math.round(amount))} to ${goals[idx].name}`;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); toast.textContent = '✅ Snapshot saved to Ledger!'; }, 2800);
+    }
+
+    // ─── EXPENSE ROWS ENGINE ─────────────────────────────────────────────────────
+    let expenseRows = [];
+    let expNextId = 100;
+
+    function renderExpenseRows() {
+        const container = document.getElementById('expense-rows-container');
+        if (!container) return;
+        container.innerHTML = expenseRows.map(r => `
+            <div class="expense-row" id="erow-${r.id}">
+                <input type="text" class="form-control exp-label-input" value="${r.label}" placeholder="Label"
+                    oninput="updateExpenseLabel(${r.id}, this.value)">
+                <input type="number" class="form-control exp-amount-input sensitive-val" value="${r.amount}" placeholder="₹ 0"
+                    oninput="updateExpenseAmount(${r.id}, this.value)">
+                <button class="exp-del-btn" onclick="removeExpenseRow(${r.id})" title="Remove">✕</button>
+            </div>
+        `).join('');
+        saveExpenseRows();
+    }
+
+    function updateExpenseLabel(id, val) {
+        const r = expenseRows.find(r => r.id === id);
+        if (r) r.label = val;
+        saveExpenseRows();
+        calculate();
+    }
+
+    function updateExpenseAmount(id, val) {
+        const r = expenseRows.find(r => r.id === id);
+        if (r) r.amount = val;
+        saveExpenseRows();
+        calculate();
+    }
+
+    function addExpenseRow() {
+        expNextId++;
+        expenseRows.push({ id: expNextId, label: '', amount: '' });
+        renderExpenseRows();
+        // Focus the new label input
+        setTimeout(() => {
+            const inputs = document.querySelectorAll('.exp-label-input');
+            if (inputs.length) inputs[inputs.length - 1].focus();
+        }, 50);
+    }
+
+    function removeExpenseRow(id) {
+        if (expenseRows.length <= 1) return; // keep at least 1
+        expenseRows = expenseRows.filter(r => r.id !== id);
+        renderExpenseRows();
+        calculate();
+    }
+
+    function saveExpenseRows() {
+        localStorage.setItem('fh_v2_expenses', JSON.stringify(expenseRows));
+    }
+
+    // ─── SURPLUS SPARKLINE ───────────────────────────────────────────────────────
+    function renderSurplusSparkline() {
+        const wrap = document.getElementById('surplus-history-wrap');
+        const spark = document.getElementById('surplus-sparkline');
+        if (!wrap || !spark || !history.length) {
+            if (wrap) wrap.style.display = 'none';
+            return;
+        }
+        const recent = history.slice(0, 8).reverse();
+        const vals = recent.map(h => {
+            const raw = h.surplus || '₹ 0';
+            const neg = raw.includes('−');
+            const num = parseFloat(raw.replace(/[^0-9.]/g, '')) || 0;
+            return neg ? -num : num;
+        });
+        const maxAbs = Math.max(...vals.map(Math.abs), 1);
+        wrap.style.display = 'block';
+        spark.innerHTML = vals.map((v, i) => {
+            const heightPct = Math.max(5, Math.round((Math.abs(v) / maxAbs) * 100));
+            const color = v < 0 ? '#f87171' : (v === 0 ? 'var(--border)' : 'var(--primary)');
+            const tip = recent[i].monthYear + ': ' + formatINR(Math.round(Math.abs(v)));
+            return `<div class="surplus-spark-bar" style="height:${heightPct}%;background:${color};opacity:${i===vals.length-1?'1':'0.55'};" data-tip="${tip}"></div>`;
+        }).join('');
+    }
+
+    // ─── NET WORTH TRACKER ───────────────────────────────────────────────────────
+    function updateNetWorthTracker() {
+        let assetsT = 0;
+        ['epfo','stock','ppf','apy','other'].forEach(k => {
+            assetsT += parseFloat(document.getElementById('i-'+k+'-bal')?.value || 0);
+        });
+        // Pull liabilities from dynamic expense rows
+        const ccRow  = expenseRows.find(r => /credit.?card/i.test(r.label));
+        const loanRow = expenseRows.find(r => /gold|loan|emi/i.test(r.label));
+        const ccLiab   = parseFloat(ccRow?.amount   || 0);
+        const loanLiab = parseFloat(loanRow?.amount || 0);
+        const totalLiab = ccLiab + loanLiab;
+        const netWorth  = assetsT - totalLiab;
+
+        const nwEl = document.getElementById('nw-total');
+        const nwNet = document.getElementById('nw-net');
+        const nwSub = document.getElementById('nw-subtitle');
+        if (!nwEl) return;
+        nwEl.textContent = formatINR(Math.round(netWorth));
+        nwEl.style.color = netWorth < 0 ? '#f87171' : 'var(--primary)';
+        if (nwNet) nwNet.textContent = formatINR(Math.round(netWorth));
+        if (nwNet) nwNet.style.color = netWorth < 0 ? '#f87171' : 'var(--primary)';
+        document.getElementById('nw-assets').textContent   = formatINR(Math.round(assetsT));
+        document.getElementById('nw-liab-cc').textContent  = formatINR(Math.round(ccLiab));
+        document.getElementById('nw-liab-loan').textContent= formatINR(Math.round(loanLiab));
+        if (nwSub) nwSub.textContent = assetsT > 0 ? `Assets ${formatINR(Math.round(assetsT))} − Liabilities ${formatINR(Math.round(totalLiab))}` : 'Fill Invest tab to compute';
+
+        // History sparkline
+        if (history.length >= 2) {
+            const recent = history.slice(0, 8).reverse();
+            const nwVals = recent.map(h => {
+                const raw = h.netWorth || '₹ 0';
+                return parseFloat(raw.replace(/[^0-9.]/g, '')) || 0;
+            });
+            const maxV = Math.max(...nwVals, 1);
+            const wrap = document.getElementById('nw-history-wrap');
+            const sparkEl = document.getElementById('nw-sparkline');
+            if (wrap && sparkEl) {
+                wrap.style.display = 'block';
+                sparkEl.innerHTML = nwVals.map((v, i) => {
+                    const h = Math.max(8, Math.round((v / maxV) * 100));
+                    const isCurrent = i === nwVals.length - 1;
+                    return `<div class="nw-history-bar${isCurrent ? ' current' : ''}" style="height:${h}%;" data-tip="${recent[i].monthYear}: ${formatINR(Math.round(v))}"></div>`;
+                }).join('');
+            }
+        }
+    }
+
+    window.onload = function() {
+        loadData();
+        updateNetWorthTracker();
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
