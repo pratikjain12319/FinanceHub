@@ -1,4 +1,5 @@
 💰 FinanceHub
+
 A single-file, offline-first personal finance web app built for Indian users. 🇮🇳 No backend, no build step, no dependencies — just one HTML file that runs entirely in your browser, with 100% of your data staying on your own device. 🔒
 
 Track your monthly budget 📊, manage investments (EPFO, PPF, APY, Stocks) 📈, plan your retirement 🧓, and get insights into your financial health — complete with a voice-guided tour 🎤, dark/light/terminal themes 🌗, and a privacy mode 🕶️ that blurs your numbers until you tap them.
