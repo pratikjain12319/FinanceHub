@@ -27,6 +27,14 @@ jobs:
           
       - name: Install Dependencies
         run: npm install
+        
+      - name: Prepare Web Assets
+        run: |
+          mkdir www
+          cp index.html www/
+          cp sw-1.js www/
+          cp icon-512x512.png www/ || true
+          cp manifest.json www/ || true
           
       - name: Add Android Platform
         run: |
