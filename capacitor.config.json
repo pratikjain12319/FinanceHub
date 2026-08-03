@@ -1,6 +1,5 @@
 {
   "appId": "com.pratik.financehubv2",
   "appName": "FinanceHub",
-  "webDir": ".",
-  "bundledWebRuntime": false
+  "webDir": "www"
 }
