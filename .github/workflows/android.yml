@@ -33,7 +33,6 @@ jobs:
           mkdir www
           cp index.html www/
           cp sw-1.js www/
-          cp icon-512x512.png www/ || true
           cp manifest.json www/ || true
           
       - name: Add Android Platform
@@ -42,6 +41,8 @@ jobs:
           
       - name: Generate App Icons
         run: |
+          mkdir -p assets
+          cp icon-512x512.png assets/icon.png
           npm install -g @capacitor/assets
           npx capacitor-assets generate --android
           
